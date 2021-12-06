@@ -1,0 +1,31 @@
+const express = require('express')
+const app = express()
+const PORT = 2000
+const createEmployeeTable = require('./db/EmployeeStorage')
+const db = require('./db/index')
+
+
+app.get('/', async(req, res) => {
+    res.send("Hello World")
+})
+
+app.get('/api/employees/', async(req, res, next) =>{
+    try {
+        let sql ='SELECT * FROM EMPLOYEES'
+	   // let sql ='SELECT * FROM oss_rba_pengawasan.t_profile'
+        let result = (await db.query(sql)).rows
+        res.send(result)
+    } catch (error) {
+        console.error(error)
+        next(error)
+    }
+
+})
+app.listen(PORT, async () => {
+    try {
+        await createEmployeeTable()
+        console.log('LISTEN TO PORT',PORT)
+    } catch (error) {
+        console.error(error)
+    }
+})
